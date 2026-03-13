@@ -1,0 +1,116 @@
+{{!
+    @template format_gridflow/layout_accordion
+
+    Accordion layout — view mode only.
+    General section (0): activities always visible inline.
+    Other sections: collapsible panels with full activity list inside.
+}}
+<div id="gridflow-wrap" class="gridflow gridflow-accordion">
+
+    {{! ─── Header ───────────────────────────────────────────────────────── }}
+    {{#showprogress}}
+    <div class="gf-header">
+        {{#showteacher}}
+        <div class="gf-teachers">
+            {{#teachers}}
+            <span class="gf-teacher">{{{picture}}}<span class="gf-teacher-name">{{fullname}}</span></span>
+            {{/teachers}}
+        </div>
+        {{/showteacher}}
+        <div class="gf-progress-wrap">
+            <div class="gf-progress-label">
+                {{#str}}courseprogresstitle,format_gridflow{{/str}}
+                <strong>{{progresspercent}}%</strong>
+            </div>
+            <div class="gf-progress-track" role="progressbar"
+                 aria-valuenow="{{progresspercent}}" aria-valuemin="0" aria-valuemax="100">
+                <div class="gf-progress-fill" style="width:{{progresspercent}}%"></div>
+            </div>
+        </div>
+        <div class="gf-acc-controls">
+            <button class="gf-btn-all" type="button" data-action="expand-all">
+                {{#str}}expandall,format_gridflow{{/str}}
+            </button>
+            <button class="gf-btn-all" type="button" data-action="collapse-all">
+                {{#str}}collapseall,format_gridflow{{/str}}
+            </button>
+        </div>
+    </div>
+    {{/showprogress}}
+
+    {{! ─── General section (section 0) — always visible, not collapsible ── }}
+    {{#hasgeneralsection}}
+    {{#generalsection}}
+    <div class="gf-general {{#hidden}}gf-hidden{{/hidden}}">
+        {{#hassummary}}<div class="gf-general-summary">{{{summary}}}</div>{{/hassummary}}
+        {{#hasactivities}}
+        <ul class="gf-activity-list">
+            {{#activities}}
+            <li class="gf-activity {{#completed}}is-done{{/completed}} {{#hidden}}is-hidden{{/hidden}}">
+                {{#iconurl}}<img class="gf-act-icon" src="{{iconurl}}" alt="" aria-hidden="true">{{/iconurl}}
+                <a href="{{url}}" class="gf-act-link">{{title}}</a>
+                {{#hascompletion}}<span class="gf-check {{#completed}}gf-done{{/completed}}">{{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}</span>{{/hascompletion}}
+            </li>
+            {{/activities}}
+        </ul>
+        {{/hasactivities}}
+    </div>
+    {{/generalsection}}
+    {{/hasgeneralsection}}
+
+    {{! ─── Accordion sections ───────────────────────────────────────────── }}
+    {{#hassections}}
+    <div class="gf-acc-list">
+        {{#sections}}
+        <div class="gf-acc-item {{#hidden}}gf-hidden{{/hidden}}" data-section="{{index}}" data-sectionid="{{id}}">
+
+            {{! Accordion header — clicking this toggles the panel }}
+            <div class="gf-acc-header" role="button" tabindex="0"
+                 aria-expanded="{{#defaultexpanded}}true{{/defaultexpanded}}{{^defaultexpanded}}false{{/defaultexpanded}}"
+                 aria-controls="gf-panel-{{id}}">
+                <span class="gf-num">{{index}}</span>
+                <span class="gf-acc-title">{{title}}</span>
+                {{#hidden}}<span class="gf-badge-hidden">{{#str}}hidefromothers,format_gridflow{{/str}}</span>{{/hidden}}
+                {{#hasprogress}}<span class="gf-acc-progress">{{completedactivities}}/{{totalactivities}}</span>{{/hasprogress}}
+                {{#isallcompleted}}<span class="gf-badge-done">✓</span>{{/isallcompleted}}
+                <span class="gf-chevron" aria-hidden="true">▾</span>
+            </div>
+
+            {{! Accordion panel — full activity list }}
+            <div class="gf-acc-panel" id="gf-panel-{{id}}"
+                 {{^defaultexpanded}}hidden{{/defaultexpanded}}>
+
+                {{#hassummary}}<div class="gf-acc-summary">{{{summary}}}</div>{{/hassummary}}
+
+                {{#hasprogress}}
+                <div class="gf-sect-progress-track" title="{{sectionprogress}}%">
+                    <div class="gf-sect-progress-fill" style="width:{{sectionprogress}}%"></div>
+                </div>
+                {{/hasprogress}}
+
+                {{#hasactivities}}
+                <ul class="gf-activity-list">
+                    {{#activities}}
+                    <li class="gf-activity {{#completed}}is-done{{/completed}} {{#hidden}}is-hidden{{/hidden}}">
+                        {{#iconurl}}<img class="gf-act-icon" src="{{iconurl}}" alt="" aria-hidden="true">{{/iconurl}}
+                        <a href="{{url}}" class="gf-act-link">{{title}}</a>
+                        {{#hascompletion}}<span class="gf-check {{#completed}}gf-done{{/completed}}">{{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}</span>{{/hascompletion}}
+                    </li>
+                    {{/activities}}
+                </ul>
+                {{/hasactivities}}
+                {{^hasactivities}}
+                <p class="gf-empty">No activities in this section.</p>
+                {{/hasactivities}}
+
+                <div class="gf-acc-foot">
+                    <a href="{{sectionurl}}" class="gf-btn-open">
+                        {{#str}}viewtopic,format_gridflow{{/str}} →
+                    </a>
+                </div>
+            </div>
+        </div>
+        {{/sections}}
+    </div>
+    {{/hassections}}
+</div>

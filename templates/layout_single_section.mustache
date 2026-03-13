@@ -1,0 +1,108 @@
+{{!
+    @template format_gridflow/layout_single_section
+
+    Single section page — shown when user clicks "View section" on a card.
+    Displays the full activity list for one section with prev/next navigation.
+
+    Context: see renderer.php render_single_section()
+}}
+<div id="gridflow-wrap" class="gridflow gridflow-single-section">
+
+    {{! ─── Breadcrumb back link ─────────────────────────────────────────── }}
+    <!-- <nav class="gf-breadcrumb" aria-label="breadcrumb">
+        <a href="{{courseurl}}" class="gf-back-link">
+            ← {{coursename}}
+        </a>
+    </nav> -->
+
+    {{! ─── Section header ──────────────────────────────────────────────── }}
+    <div class="gf-single-header {{#hidden}}gf-hidden{{/hidden}}">
+        <h2 class="gf-single-title">{{title}}</h2>
+
+        {{#hidden}}
+        <span class="gf-badge-hidden">{{#str}}hidefromothers,format_gridflow{{/str}}</span>
+        {{/hidden}}
+
+        {{! Section progress }}
+        <!-- {{#hasprogress}}
+        <div class="gf-single-progress">
+            <div class="gf-progress-label">
+                <span>{{completedactivities}} / {{totalactivities}}
+                {{#str}}activitiescompleted,format_gridflow{{/str}}</span>
+                <strong>{{sectionprogress}}%</strong>
+            </div>
+            <div class="gf-progress-track" role="progressbar"
+                 aria-valuenow="{{sectionprogress}}" aria-valuemin="0" aria-valuemax="100">
+                <div class="gf-progress-fill" style="width:{{sectionprogress}}%"></div>
+            </div>
+        </div>
+        {{/hasprogress}} -->
+
+        {{#hassummary}}
+        <div class="gf-single-summary">{{{summary}}}</div>
+        {{/hassummary}}
+    </div>
+
+    {{! ─── Activity list ────────────────────────────────────────────────── }}
+    {{#hasactivities}}
+    <ul class="gf-single-activities">
+        {{#activities}}
+        <li class="gf-single-activity {{#completed}}is-done{{/completed}} {{#hidden}}is-hidden{{/hidden}}">
+            <div class=" activity-icon activityiconcontainer {{purpose}}" style="margin-right: 0 !important;">
+                {{#iconurl}}
+                <img src="{{iconurl}}" alt="{{modnamestr}}" title="{{modnamestr}}" class="activityicon ">
+                {{/iconurl}}
+                {{^iconurl}}
+                <span class="gf-act-icon-placeholder" title="{{modnamestr}}">📄</span>
+                {{/iconurl}}
+            </div>
+            <div class="gf-single-act-body">
+                <a href="{{url}}" class="gf-single-act-link {{#hidden}}text-muted{{/hidden}}">
+                    {{title}}
+                </a>
+                {{#modnamestr}}<span class="gf-single-act-type">{{modnamestr}}</span>{{/modnamestr}}
+                {{#hidden}}<span class="gf-badge-hidden">Hidden</span>{{/hidden}}
+            </div>
+            <div class="gf-single-act-status">
+                {{#hascompletion}}
+                <span class="gf-completion-pill {{#completed}}gf-pill-done{{/completed}}{{^completed}}gf-pill-todo{{/completed}}"
+                      aria-label="{{#completed}}Completed{{/completed}}{{^completed}}Not completed{{/completed}}">
+                    {{#completed}}✓ Done{{/completed}}
+                    {{^completed}}○ To do{{/completed}}
+                </span>
+                {{/hascompletion}}
+            </div>
+        </li>
+        {{/activities}}
+    </ul>
+    {{/hasactivities}}
+
+    {{^hasactivities}}
+    <div class="gf-single-empty">
+        <p>No activities in this section.</p>
+    </div>
+    {{/hasactivities}}
+
+    {{! ─── Prev / Next navigation ───────────────────────────────────────── }}
+    <nav class="gf-section-nav" aria-label="Section navigation">
+        <div class="gf-nav-prev">
+            {{#hasprev}}
+            <a href="{{prevurl}}" class="gf-nav-btn">
+                ← {{#str}}previous,format_gridflow{{/str}}
+                <span class="gf-nav-title">{{prevtitle}}</span>
+            </a>
+            {{/hasprev}}
+        </div>
+        <a href="{{courseurl}}" class="gf-btn-open">
+            ↑ Back to course
+        </a>
+        <div class="gf-nav-next">
+            {{#hasnext}}
+            <a href="{{nexturl}}" class="gf-nav-btn">
+                {{#str}}next,format_gridflow{{/str}} →
+                <span class="gf-nav-title">{{nexttitle}}</span>
+            </a>
+            {{/hasnext}}
+        </div>
+    </nav>
+</div>

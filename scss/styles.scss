@@ -1,0 +1,482 @@
+// GridFlow Course Format — styles.scss
+// Compiled to styles.css for Moodle (no SCSS compiler needed at runtime;
+// the CSS file is what Moodle loads via $CFG->themedir or format CSS).
+//
+// ─────────────────────────────────────────────────────────────
+// Variables
+// ─────────────────────────────────────────────────────────────
+
+$gf-primary:       #0066cc;
+$gf-primary-dark:  #004fa3;
+$gf-success:       #28a745;
+$gf-muted:         #6c757d;
+$gf-border:        #dee2e6;
+$gf-bg-card:       #ffffff;
+$gf-bg-general:    #f0f4ff;
+$gf-shadow:        0 2px 8px rgba(0,0,0,0.09);
+$gf-radius:        8px;
+$gf-radius-sm:     4px;
+$gf-transition:    0.2s ease;
+
+// ─────────────────────────────────────────────────────────────
+// Shared container
+// ─────────────────────────────────────────────────────────────
+
+#gridflow-container {
+    font-family: inherit;
+    padding: 0 0 2rem;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Header bar (progress + teacher — shared between layouts)
+// ─────────────────────────────────────────────────────────────
+
+.gridflow-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: $gf-bg-general;
+    border-radius: $gf-radius;
+    border: 1px solid $gf-border;
+}
+
+.gridflow-teachers {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.gridflow-teacher {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    img { border-radius: 50%; }
+}
+
+// Overall course progress bar.
+.gridflow-progress-wrap {
+    flex: 1;
+    min-width: 200px;
+}
+
+.gridflow-progress-label {
+    display: block;
+    font-size: 0.82rem;
+    color: $gf-muted;
+    margin-bottom: 0.25rem;
+}
+
+.gridflow-progress-bar {
+    height: 10px;
+    background: #e9ecef;
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.gridflow-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $gf-primary, #33aaff);
+    border-radius: 100px;
+    transition: width 0.5s ease;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Shared: section progress (mini, inside cards/accordion)
+// ─────────────────────────────────────────────────────────────
+
+.gridflow-section-progress {
+    height: 5px;
+    background: #e9ecef;
+    border-radius: 100px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+
+    .gridflow-section-progress-fill {
+        height: 100%;
+        background: $gf-success;
+        border-radius: 100px;
+        transition: width 0.4s ease;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Shared: activity list
+// ─────────────────────────────────────────────────────────────
+
+.gridflow-activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+}
+
+.gridflow-activity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid $gf-border;
+    font-size: 0.9rem;
+
+    &:last-child { border-bottom: none; }
+
+    &.is-completed .gridflow-activity-link {
+        color: $gf-muted;
+        text-decoration: line-through;
+    }
+
+    &.is-hidden { opacity: 0.5; }
+}
+
+.gridflow-activity-icon {
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    img { width: 16px; height: 16px; }
+}
+
+.gridflow-activity-link {
+    flex: 1;
+    color: $gf-primary;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+}
+
+.gridflow-completion-badge {
+    font-size: 0.8rem;
+    color: $gf-muted;
+    &.is-done { color: $gf-success; font-weight: bold; }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Hidden section badge
+// ─────────────────────────────────────────────────────────────
+
+.gridflow-hidden-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: #ffc107;
+    color: #333;
+    border-radius: $gf-radius-sm;
+    padding: 0 6px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+}
+
+.gridflow-hidden { opacity: 0.65; }
+
+// ─────────────────────────────────────────────────────────────
+// GRID layout
+// ─────────────────────────────────────────────────────────────
+
+.gridflow-grid {
+
+    .gridflow-sections-grid {
+        margin: 0 -0.75rem;
+    }
+
+    .gridflow-col {
+        padding: 0 0.75rem;
+    }
+
+    // ── Section card ──────────────────────────────────────────
+
+    .gridflow-section-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: $gf-bg-card;
+        border: 1px solid $gf-border;
+        border-radius: $gf-radius;
+        box-shadow: $gf-shadow;
+        overflow: hidden;
+        transition: box-shadow $gf-transition, transform $gf-transition;
+
+        &:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+    }
+
+    // Card style variants.
+    &.cardstyle-1 .gridflow-section-card {
+        box-shadow: none;
+        border: 1px solid $gf-border;
+        &:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); transform: none; }
+    }
+
+    &.cardstyle-2 .gridflow-section-card {
+        box-shadow: none;
+        border: none;
+        border-bottom: 2px solid $gf-border;
+        border-radius: 0;
+        &:hover { border-bottom-color: $gf-primary; transform: none; }
+    }
+
+    .gridflow-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1rem 0.6rem;
+        border-bottom: 1px solid $gf-border;
+        background: lighten($gf-primary, 50%);
+    }
+
+    .gridflow-section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        background: $gf-primary;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .gridflow-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+        color: #333;
+    }
+
+    .gridflow-card-body {
+        padding: 0.85rem 1rem;
+        flex: 1;
+        cursor: pointer;
+
+        .gridflow-card-activities {
+            display: none; // Shown via JS on click.
+        }
+    }
+
+    .gridflow-card-summary {
+        font-size: 0.88rem;
+        color: $gf-muted;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    .gridflow-activity-count {
+        margin: 0.25rem 0 0;
+    }
+
+    .gridflow-card-footer {
+        padding: 0.6rem 1rem;
+        border-top: 1px solid $gf-border;
+        background: #fafafa;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .gridflow-btn-view {
+        display: inline-block;
+        padding: 0.3rem 0.9rem;
+        background: $gf-primary;
+        color: #fff;
+        border-radius: $gf-radius-sm;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: background $gf-transition;
+
+        &:hover {
+            background: $gf-primary-dark;
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+
+    .gridflow-card-controls {
+        padding: 0.4rem 0.75rem;
+        border-top: 1px solid $gf-border;
+        background: #f8f9fa;
+        font-size: 0.8rem;
+    }
+
+    // General section card (full width).
+    .gridflow-general-card {
+        margin-bottom: 1.5rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .gridflow-card-body { cursor: default; }
+    }
+
+    // Add section card (editing).
+    .gridflow-add-card {
+        border: 2px dashed $gf-border;
+        box-shadow: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 120px;
+        color: $gf-muted;
+        font-size: 0.9rem;
+        cursor: pointer;
+
+        &:hover {
+            border-color: $gf-primary;
+            color: $gf-primary;
+            background: lighten($gf-primary, 52%);
+            transform: none;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// ACCORDION layout
+// ─────────────────────────────────────────────────────────────
+
+.gridflow-accordion {
+
+    .gridflow-accordion-controls {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: auto;
+
+        button {
+            background: none;
+            border: 1px solid $gf-border;
+            border-radius: $gf-radius-sm;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.82rem;
+            cursor: pointer;
+            color: $gf-muted;
+            transition: all $gf-transition;
+
+            &:hover {
+                border-color: $gf-primary;
+                color: $gf-primary;
+            }
+        }
+    }
+
+    .gridflow-accordion-general {
+        background: $gf-bg-general;
+        border: 1px solid $gf-border;
+        border-radius: $gf-radius;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+
+        .gridflow-general-summary {
+            font-size: 0.9rem;
+            color: #444;
+            margin-bottom: 0.75rem;
+        }
+    }
+
+    .gridflow-accordion-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .gridflow-accordion-item {
+        border: 1px solid $gf-border;
+        border-radius: $gf-radius;
+        overflow: hidden;
+        background: $gf-bg-card;
+        transition: box-shadow $gf-transition;
+
+        &:hover { box-shadow: $gf-shadow; }
+    }
+
+    .gridflow-accordion-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.9rem 1.1rem;
+        cursor: pointer;
+        user-select: none;
+        background: #fff;
+        transition: background $gf-transition;
+
+        &:hover { background: #f5f8ff; }
+
+        &[aria-expanded="true"] {
+            background: lighten($gf-primary, 50%);
+            border-bottom: 1px solid $gf-border;
+        }
+    }
+
+    .gridflow-accordion-title {
+        flex: 1;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .gridflow-mini-progress {
+        font-size: 0.78rem;
+        color: $gf-muted;
+        white-space: nowrap;
+    }
+
+    .gridflow-accordion-chevron {
+        font-size: 1.1rem;
+        color: $gf-muted;
+        transition: transform 0.25s ease;
+    }
+
+    .gridflow-accordion-header[aria-expanded="true"] {
+        .gridflow-accordion-chevron { transform: rotate(-180deg); }
+    }
+
+    .gridflow-accordion-panel {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid $gf-border;
+    }
+
+    .gridflow-accordion-summary {
+        font-size: 0.88rem;
+        color: #555;
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+    }
+
+    .gridflow-empty-section {
+        font-size: 0.88rem;
+        font-style: italic;
+    }
+
+    .gridflow-add-section-wrap {
+        padding: 0.5rem 0;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Responsive
+// ─────────────────────────────────────────────────────────────
+
+@media (max-width: 767px) {
+    .gridflow-grid .gridflow-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .gridflow-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gridflow-accordion .gridflow-accordion-controls {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .gridflow-grid .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}

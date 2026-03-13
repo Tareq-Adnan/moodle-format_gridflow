@@ -1,0 +1,28 @@
+{{!
+    @template format_gridflow/courseformat/content
+
+    GridFlow course content wrapper.
+
+    This template wraps core_courseformat/local/content but injects
+    GridFlow layout classes so our CSS and JS can style the course
+    as cards (grid) or accordion without touching core editing features.
+
+    All editing UI (add activity, add section, bulk actions, drag-drop)
+    is rendered by the core sections/activities partials included via
+    {{< core_courseformat/local/content }}.
+}}
+
+{{< core_courseformat/local/content }}
+    {{$ contentheader }}
+    <div id="gridflow-container"
+         class="gridflow {{gridflow_layoutclass}} {{gridflow_cardstyleclass}}"
+         data-layout="{{gridflow_layout}}"
+         data-gridcols="{{gridflow_gridcols}}"
+         data-expanded="{{gridflow_expanded}}"
+         data-courseid="{{id}}">
+    {{/ contentheader }}
+
+    {{$ contentfooter }}
+    </div>{{! closes #gridflow-container }}
+    {{/ contentfooter }}
+{{/ core_courseformat/local/content }}

@@ -1,0 +1,144 @@
+{{!
+@template format_gridflow/layout_grid
+
+Grid card layout — view mode only.
+General section (0): activities always visible inline.
+Section cards: activities hidden, revealed by toggle button.
+}}
+<div id="gridflow-wrap" class="gridflow gridflow-grid {{cardstyleclass}}">
+
+    {{! ─── Header: teachers + overall progress ─────────────────────────── }}
+    {{#showprogress}}
+    <!-- <div class="gf-header">
+        {{#showteacher}}
+        <div class="gf-teachers">
+            {{#teachers}}
+            <span class="gf-teacher">
+                {{{picture}}}
+                <span class="gf-teacher-name">{{fullname}}</span>
+            </span>
+            {{/teachers}}
+        </div>
+        {{/showteacher}}
+        <div class="gf-progress-wrap">
+            <div class="gf-progress-label">
+                {{#str}}courseprogresstitle,format_gridflow{{/str}}
+                <strong>{{progresspercent}}%</strong>
+            </div>
+            <div class="gf-progress-track" role="progressbar" aria-valuenow="{{progresspercent}}" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="gf-progress-fill" style="width:{{progresspercent}}%"></div>
+            </div>
+        </div>
+    </div> -->
+    {{/showprogress}}
+
+    {{! ─── General section (section 0) — full width, activities always shown ── }}
+    {{#hasgeneralsection}}
+    {{#generalsection}}
+    {{#hassummary}}<div class="gf-general-summary">{{{summary}}}</div>{{/hassummary}}
+    <div class="gf-general {{#hidden}}gf-hidden{{/hidden}}">
+
+        {{#hasactivities}}
+
+        {{#activities}}
+        <div class="gf-activity {{#completed}}is-done{{/completed}} {{#hidden}}is-hidden{{/hidden}}">
+
+            <a href="{{url}}" class="gf-act-link">
+                <div class="activity-icon activityiconcontainer smaller {{purpose}} mb-3"
+                    style="margin-right: 0 !important;">
+                    {{#iconurl}}<img class="activityicon" src="{{iconurl}}" alt="" aria-hidden="true">{{/iconurl}}
+                </div>
+
+                <span>{{title}}</span>
+                {{#hascompletion}}
+                    <span class="gf-check {{#completed}}gf-done{{/completed}}">
+                        {{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}
+                    </span>
+                {{/hascompletion}}
+            </a>
+        </div>
+        {{/activities}}
+
+        {{/hasactivities}}
+    </div>
+    {{/generalsection}}
+    {{/hasgeneralsection}}
+
+    {{! ─── Section cards grid ───────────────────────────────────────────── }}
+    {{#hassections}}
+
+    <div class="gf-course-contents">
+        <span class="gf-content-icon">{{#pix}}icon, mod_imscp, "IMSC module"{{/pix}}</span>
+        <span class="title">Course Contents ({{sectionnum}})</span>
+    </div>
+
+    <div class="gf-grid row">
+        {{#sections}}
+        <div class="gf-col {{colclass}}">
+            <div class="gf-card {{#hidden}}gf-hidden{{/hidden}} {{#isallcompleted}}gf-card-done{{/isallcompleted}}"
+                data-section="{{index}}" data-sectionid="{{id}}">
+
+                {{! Card header }}
+                <div class="gf-card-head">
+                    <!-- <span class="gf-num" aria-hidden="true">{{index}}</span> -->
+                    <h4 class="gf-card-title">
+                        <a href="{{sectionurl}}" class="gf-section-link">{{title}}</a>
+                    </h4>
+                    {{#hidden}}<span
+                        class="gf-badge-hidden">{{#str}}hidefromothers,format_gridflow{{/str}}</span>{{/hidden}}
+                    {{#isallcompleted}}<span class="gf-badge-done" aria-label="All complete">✓</span>{{/isallcompleted}}
+                </div>
+
+                {{! Card body }}
+                <div class="gf-card-body">
+                    <!-- {{#summaryshort}}<p class="gf-card-summary">{{summaryshort}}</p>{{/summaryshort}} -->
+                    {{#activityinfostring}}<p class="gf-act-count">{{activityinfostring}}</p>{{/activityinfostring}}
+
+                    <!-- {{#hasprogress}}
+                    <div class="gf-sect-progress-track" title="{{completedactivities}} / {{totalactivities}} complete">
+                        <div class="gf-sect-progress-fill" style="width:{{sectionprogress}}%"></div>
+                    </div>
+                    <p class="gf-sect-progress-text">
+                        {{completedactivities}} / {{totalactivities}}
+                        {{#str}}activitiescompleted,format_gridflow{{/str}}
+                    </p>
+                    {{/hasprogress}} -->
+
+                    {{! Activities list — hidden until toggle button clicked }}
+                    {{#hasactivities}}
+                    <ul class="gf-act-list" hidden>
+                        {{#activities}}
+                        <li class="gf-activity {{#completed}}is-done{{/completed}} {{#hidden}}is-hidden{{/hidden}}">
+                            {{#iconurl}}<img class="gf-act-icon" src="{{iconurl}}" alt=""
+                                aria-hidden="true">{{/iconurl}}
+                            <a href="{{url}}" class="gf-act-link">{{title}}</a>
+                            {{#hascompletion}}
+                            <span class="gf-check {{#completed}}gf-done{{/completed}}">
+                                {{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}
+                            </span>
+                            {{/hascompletion}}
+                        </li>
+                        {{/activities}}
+                    </ul>
+                    {{/hasactivities}}
+                </div>
+
+                {{! Card footer }}
+                <div class="gf-card-foot">
+                    {{#hasactivities}}
+                    <span class="gf-btn-toggle" aria-expanded="false">
+                        <span class="gf-toggle-label">{{#str}}viewactivity,format_gridflow{{/str}}</span>
+                        <!-- <span class="gf-toggle-icon" aria-hidden="true">▾</span> -->
+                    </span>
+                    {{/hasactivities}}
+                    <!-- <a href="{{sectionurl}}" class="gf-btn-open">
+                        {{#str}}viewtopic,format_gridflow{{/str}} →
+                    </a> -->
+                </div>
+            </div>
+        </div>
+        {{/sections}}
+    </div>
+    {{/hassections}}
+</div>
