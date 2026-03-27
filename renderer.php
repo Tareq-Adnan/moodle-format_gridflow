@@ -160,115 +160,193 @@ class format_gridflow_renderer extends core_courseformat\output\section_renderer
      * @param int      $layout
      * @return string HTML
      */
-    public function render_gridflow($course, $displaysection, $settings, $layout) {
-        global $USER, $OUTPUT;
-        $output = $this->output;
-        $modinfo    = get_fast_modinfo($course);
-        $context    = context_course::instance($course->id);
-        $completion = new completion_info($course);
+public function render_gridflow($course, $displaysection, $settings, $layout) {
+    global $USER, $OUTPUT;
 
-        // ── Overall progress ─────────────────────────────────────────────────
-        $progresspercent = 0;
-        $showprogress    = !empty($settings['showprogressbar']);
-        if ($showprogress && $completion->is_enabled()) {
-            $total = $done = 0;
+    $output     = $this->output;
+    $modinfo    = get_fast_modinfo($course);
+    $context    = context_course::instance($course->id);
+    $completion = new completion_info($course);
+
+    // ── Pagination ────────────────────────────────────────────────────────
+    $limit = 9;
+    $page  = optional_param('page', 0, PARAM_INT);
+
+    // ── Overall progress ──────────────────────────────────────────────────
+    $progresspercent = 0;
+    $showprogress    = !empty($settings['showprogressbar']);
+
+    if ($showprogress && $completion->is_enabled()) {
+        $total = $done = 0;
+
+        // Avoid heavy load for huge courses
+        if (count($modinfo->cms) <= 300) {
             foreach ($modinfo->cms as $cm) {
                 if ($cm->completion != COMPLETION_TRACKING_NONE && $cm->uservisible) {
                     $total++;
                     $cdata = $completion->get_data($cm, false, $USER->id);
-                    if (in_array($cdata->completionstate,
-                            [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS])) {
+
+                    if (in_array($cdata->completionstate, [
+                        COMPLETION_COMPLETE,
+                        COMPLETION_COMPLETE_PASS
+                    ])) {
                         $done++;
                     }
                 }
             }
-            if ($total > 0) {
-                $progresspercent = (int)round(($done / $total) * 100);
-            }
         }
 
-        // ── Teachers ─────────────────────────────────────────────────────────
-        $teachers    = [];
-        $showteacher = !empty($settings['showteacherinfo']);
-        if ($showteacher) {
-            $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $context);
-            foreach ($roles as $role) {
-                $list = get_role_users(
-                    $role->id, $context, false,
-                    'u.id,u.firstname,u.lastname,u.picture,u.imagealt,u.email',
-                    'u.lastname,u.firstname,u.id',
-                    true, '', 0, 5
-                );
-                foreach ($list as $t) {
-                    $teachers[] = [
-                        'fullname' => fullname($t),
-                        'picture'  => ""
-                        ];
-                }
-                if ($teachers) { break; }
+        if ($total > 0) {
+            $progresspercent = (int) round(($done / $total) * 100);
+        }
+    }
+
+    // ── Teachers ──────────────────────────────────────────────────────────
+    $teachers    = [];
+    $showteacher = !empty($settings['showteacherinfo']);
+
+    if ($showteacher) {
+        $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $context);
+
+        foreach ($roles as $role) {
+            $list = get_role_users(
+                $role->id,
+                $context,
+                false,
+                'u.id,u.firstname,u.lastname,u.picture,u.imagealt,u.email',
+                'u.lastname,u.firstname,u.id',
+                true,
+                '',
+                0,
+                5
+            );
+
+            foreach ($list as $t) {
+                $teachers[] = [
+                    'fullname' => fullname($t),
+                    // 'picture'  => $OUTPUT->user_picture($t, ['size' => 35])
+                ];
+            }
+
+            if (!empty($teachers)) {
+                break;
             }
         }
+    }
 
-        // ── Build sections ────────────────────────────────────────────────────
-        $trunclen    = (int)($settings['summarytruncatelength'] ?? 120);
-        $hidegeneral = $this->courseformat->hide_general_section_when_empty($course);
-        $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
+    // ── Section Processing ────────────────────────────────────────────────
+    $trunclen      = (int)($settings['summarytruncatelength'] ?? 120);
+    $hidegeneral   = $this->courseformat->hide_general_section_when_empty($course);
+    $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
 
-        $generalsection = null;
-        $sections       = [];
+    $generalsection = null;
+    $sections       = [];
+    $allsections    = [];
 
-        foreach ($modinfo->get_section_info_all() as $num => $info) {
+    // Collect valid sections first
+    foreach ($modinfo->get_section_info_all() as $num => $info) {
 
-            if (!$info->uservisible && !$canviewhidden) { continue; }
+        if (!$info->uservisible && !$canviewhidden) {
+            continue;
+        }
 
+        // General section
+        if ($num == 0) {
             $sdata = $this->build_section_card(
                 $course, $info, $num, $modinfo, $completion, $context, $trunclen, $USER
             );
-            if ($sdata === null || $info->itemid) { continue; }
 
-            if ($num === 0) {
-                if (!$hidegeneral) { $generalsection = $sdata; }
-            } else {
-                // Don't show empty sections in overview.
-                if (empty($modinfo->sections[$num])) { continue; }
-                $sections[] = $sdata;
+            if (!$hidegeneral && $sdata !== null) {
+                $generalsection = $sdata;
             }
+
+            continue;
         }
 
-        // ── Template data ─────────────────────────────────────────────────────
-        $gridcols  = max(1, (int)($settings['gridcolumns']     ?? 3));
-        $cardstyle = (int)($settings['sectioncardstyle']       ?? 0);
-        $expanded  = (int)($settings['defaultsectionexpanded'] ?? 1);
+        // Skip empty sections
+        if (empty($modinfo->sections[$num])) {
+            continue;
+        }
 
-        $data = [
-            'courseid'          => $course->id,
-            'gridcols'          => $gridcols,
-            'colclass'          => 'col-lg-' . (int)(12 / $gridcols) . ' col-md-6 col-12',
-            'cardstyleclass'    => 'cardstyle-' . $cardstyle,
-            'showprogress'      => $showprogress,
-            'progresspercent'   => $progresspercent,
-            'showteacher'       => ($showteacher && !empty($teachers)),
-            'teachers'          => array_values($teachers),
-            'generalsection'    => $generalsection,
-            'hasgeneralsection' => !empty($generalsection),
-            'sections'          => array_values($sections),
-            'hassections'       => !empty($sections),
-            'defaultexpanded'   => $expanded,
-            'sectionnum'        => count($sections),
-        ];
-
-        $this->page->requires->js_call_amd('format_gridflow/main', 'init', [[
-            'layout'   => $layout,
-            'expanded' => $expanded,
-            'courseid' => $course->id,
-        ]]);
-
-        $template = ($layout === GRIDFLOW_LAYOUT_ACCORDION)
-            ? 'format_gridflow/layout_accordion'
-            : 'format_gridflow/layout_grid';
-
-        return $this->render_from_template($template, $data);
+        $allsections[] = [$num, $info];
     }
+
+    // Total sections count
+    $total = count($allsections);
+
+    // Slice for current page
+    $start = $page * $limit;
+    $pagedsections = array_slice($allsections, $start, $limit);
+
+    // Build section cards
+    foreach ($pagedsections as [$num, $info]) {
+
+        $sdata = $this->build_section_card(
+            $course, $info, $num, $modinfo, $completion, $context, $trunclen, $USER
+        );
+
+        if ($sdata === null || $info->itemid) {
+            continue;
+        }
+
+        $sections[] = $sdata;
+    }
+
+    // ── Layout Settings ───────────────────────────────────────────────────
+    $gridcols  = max(1, (int)($settings['gridcolumns'] ?? 3));
+    $cardstyle = (int)($settings['sectioncardstyle'] ?? 0);
+    $expanded  = (int)($settings['defaultsectionexpanded'] ?? 1);
+
+    // Auto switch layout if too many sections
+    // if ($total > 50) {
+    //     $layout = GRIDFLOW_LAYOUT_ACCORDION;
+    // }
+
+    // ── Paging Bar ────────────────────────────────────────────────────────
+    $baseurl = new moodle_url('/course/view.php', [
+        'id' => $course->id
+    ]);
+
+    $pagingbar = new paging_bar(
+        $total,
+        $page,
+        $limit,
+        $baseurl
+    );
+
+    // ── Template Data ─────────────────────────────────────────────────────
+    $data = [
+        'courseid'          => $course->id,
+        'gridcols'          => $gridcols,
+        'colclass'          => 'col-lg-' . (int)(12 / $gridcols) . ' col-md-6 col-12',
+        'cardstyleclass'    => 'cardstyle-' . $cardstyle,
+        'showprogress'      => $showprogress,
+        'progresspercent'   => $progresspercent,
+        'showteacher'       => ($showteacher && !empty($teachers)),
+        'teachers'          => array_values($teachers),
+        'generalsection'    => $generalsection,
+        'hasgeneralsection' => !empty($generalsection),
+        'sections'          => array_values($sections),
+        'hassections'       => !empty($sections),
+        'defaultexpanded'   => $expanded,
+        'sectionnum'        => $total,
+        'pagingbar'         => $output->render($pagingbar)
+    ];
+
+    // ── JS (optional, safe to keep even if unused) ─────────────────────────
+    $this->page->requires->js_call_amd('format_gridflow/main', 'init', [[
+        'layout'   => $layout,
+        'expanded' => $expanded,
+        'courseid' => $course->id,
+    ]]);
+
+    // ── Template ──────────────────────────────────────────────────────────
+    $template = ($layout === GRIDFLOW_LAYOUT_ACCORDION)
+        ? 'format_gridflow/layout_accordion'
+        : 'format_gridflow/layout_grid';
+
+    return $this->render_from_template($template, $data);
+}
 
     // ══════════════════════════════════════════════════════════════════════════
     // HELPERS
