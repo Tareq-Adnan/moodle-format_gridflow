@@ -169,7 +169,7 @@ public function render_gridflow($course, $displaysection, $settings, $layout) {
     $completion = new completion_info($course);
 
     // ── Pagination ────────────────────────────────────────────────────────
-    $limit = 9;
+    $limit = 12;
     $page  = optional_param('page', 0, PARAM_INT);
 
     // ── Overall progress ──────────────────────────────────────────────────
