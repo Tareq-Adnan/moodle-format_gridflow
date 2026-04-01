@@ -6,8 +6,8 @@ General section (0): activities always visible inline.
 Section cards: activities hidden, revealed by toggle button.
 }}
 
-{{{ output.course_content_header }}}
-<div id="gridflow-wrap"  class="gridflow gridflow-grid {{cardstyleclass}}">
+
+<div id="gridflow-wrap" class="gridflow gridflow-grid {{cardstyleclass}}">
 
     {{! ─── Header: teachers + overall progress ─────────────────────────── }}
     {{#showprogress}}
@@ -38,7 +38,8 @@ Section cards: activities hidden, revealed by toggle button.
     {{! ─── General section (section 0) — full width, activities always shown ── }}
     {{#hasgeneralsection}}
     {{#generalsection}}
-    {{#hassummary}}<div class="gf-general-summary">{{{summary}}}</div>{{/hassummary}}
+    {{#hassummary}}
+    <div class="gf-general-summary">{{{summary}}}</div>{{/hassummary}}
     <div class="gf-general {{#hidden}}gf-hidden{{/hidden}}">
 
         {{#hasactivities}}

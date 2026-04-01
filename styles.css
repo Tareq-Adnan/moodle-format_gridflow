@@ -212,7 +212,7 @@ li>.gf-act-link {
     position: relative;
 }
 .gf-card.lecture {
-    border-top: 6px solid var(--accent-teal);
+    border-top: 2px solid var(--accent-teal);
     display: block;
     text-align: left;
     padding-bottom: 0;

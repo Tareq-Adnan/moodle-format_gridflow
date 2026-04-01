@@ -242,6 +242,7 @@ public function render_gridflow($course, $displaysection, $settings, $layout) {
     $generalsection = null;
     $sections       = [];
     $allsections    = [];
+    $nonGeneralSectionCount = 0;
 
     // Collect valid sections first
     foreach ($modinfo->get_section_info_all() as $num => $info) {
@@ -266,6 +267,10 @@ public function render_gridflow($course, $displaysection, $settings, $layout) {
         // Skip empty sections
         if (empty($modinfo->sections[$num])) {
             continue;
+        }
+
+        if (!$info->itemid) {
+            $nonGeneralSectionCount++;
         }
 
         $allsections[] = [$num, $info];
@@ -293,6 +298,7 @@ public function render_gridflow($course, $displaysection, $settings, $layout) {
     }
 
     // ── Layout Settings ───────────────────────────────────────────────────
+
     $gridcols  = max(1, (int)($settings['gridcolumns'] ?? 3));
     $cardstyle = (int)($settings['sectioncardstyle'] ?? 0);
     $expanded  = (int)($settings['defaultsectionexpanded'] ?? 1);
@@ -329,7 +335,7 @@ public function render_gridflow($course, $displaysection, $settings, $layout) {
         'sections'          => array_values($sections),
         'hassections'       => !empty($sections),
         'defaultexpanded'   => $expanded,
-        'sectionnum'        => $total,
+        'sectionnum'        => $nonGeneralSectionCount,
         'pagingbar'         => $output->render($pagingbar)
     ];
 
