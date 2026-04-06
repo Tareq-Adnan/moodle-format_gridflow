@@ -5,6 +5,8 @@ Grid card layout — view mode only.
 General section (0): activities always visible inline.
 Section cards: activities hidden, revealed by toggle button.
 }}
+
+
 <div id="gridflow-wrap" class="gridflow gridflow-grid {{cardstyleclass}}">
 
     {{! ─── Header: teachers + overall progress ─────────────────────────── }}
@@ -36,7 +38,8 @@ Section cards: activities hidden, revealed by toggle button.
     {{! ─── General section (section 0) — full width, activities always shown ── }}
     {{#hasgeneralsection}}
     {{#generalsection}}
-    {{#hassummary}}<div class="gf-general-summary">{{{summary}}}</div>{{/hassummary}}
+    {{#hassummary}}
+    <div class="gf-general-summary">{{{summary}}}</div>{{/hassummary}}
     <div class="gf-general {{#hidden}}gf-hidden{{/hidden}}">
 
         {{#hasactivities}}
@@ -52,9 +55,9 @@ Section cards: activities hidden, revealed by toggle button.
 
                 <span>{{title}}</span>
                 {{#hascompletion}}
-                    <span class="gf-check {{#completed}}gf-done{{/completed}}">
-                        {{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}
-                    </span>
+                <span class="gf-check {{#completed}}gf-done{{/completed}}">
+                    {{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}
+                </span>
                 {{/hascompletion}}
             </a>
         </div>
@@ -75,9 +78,16 @@ Section cards: activities hidden, revealed by toggle button.
 
     <div class="gf-grid row">
         {{#sections}}
-        <div class="gf-col {{colclass}}">
-            <div class="gf-card {{#hidden}}gf-hidden{{/hidden}} {{#isallcompleted}}gf-card-done{{/isallcompleted}}"
+        <div class="gf-col {{colclass}}" data-region="section-actions">
+            <div class="gf-card lecture {{#hidden}}gf-hidden{{/hidden}} {{#isallcompleted}}gf-card-done{{/isallcompleted}}"
                 data-section="{{index}}" data-sectionid="{{id}}">
+                <div class="format_gridflow-lecture-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="2" y="3" width="20" height="14" rx="2" />
+                        <path d="M8 21h8m-4-4v4" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
 
                 {{! Card header }}
                 <div class="gf-card-head">
@@ -113,11 +123,11 @@ Section cards: activities hidden, revealed by toggle button.
                             {{#iconurl}}<img class="gf-act-icon" src="{{iconurl}}" alt=""
                                 aria-hidden="true">{{/iconurl}}
                             <a href="{{url}}" class="gf-act-link">{{title}}</a>
-                            {{#hascompletion}}
+                            <!-- {{#hascompletion}}
                             <span class="gf-check {{#completed}}gf-done{{/completed}}">
                                 {{#completed}}✓{{/completed}}{{^completed}}○{{/completed}}
-                            </span>
-                            {{/hascompletion}}
+                            </span> -->
+                            <!-- {{/hascompletion}} -->
                         </li>
                         {{/activities}}
                     </ul>
@@ -141,4 +151,9 @@ Section cards: activities hidden, revealed by toggle button.
         {{/sections}}
     </div>
     {{/hassections}}
+    {{#pagingbar}}
+    <div class="gridflow-pagination mt-3">
+        {{{pagingbar}}}
+    </div>
+    {{/pagingbar}}
 </div>
