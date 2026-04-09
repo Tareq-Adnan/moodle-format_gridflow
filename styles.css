@@ -218,7 +218,7 @@ li>.gf-act-link {
     padding-bottom: 0;
 }
 .gf-card.lecture .gf-card-head {
-    padding: .75rem 0;
+    padding: .3rem 0;
 }
 .gf-check {
     font-size: .8rem;
@@ -419,10 +419,10 @@ li>.gf-act-link {
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 4px 9px;
-    word-wrap: break-word;
-    word-break: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 /* Card footer */

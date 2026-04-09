@@ -81,23 +81,28 @@ Section cards: activities hidden, revealed by toggle button.
         <div class="gf-col {{colclass}}" data-region="section-actions">
             <div class="gf-card lecture {{#hidden}}gf-hidden{{/hidden}} {{#isallcompleted}}gf-card-done{{/isallcompleted}}"
                 data-section="{{index}}" data-sectionid="{{id}}">
-                <div class="format_gridflow-lecture-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <rect x="2" y="3" width="20" height="14" rx="2" />
-                        <path d="M8 21h8m-4-4v4" />
-                        <circle cx="12" cy="10" r="3" />
-                    </svg>
-                </div>
+                <div class="d-flex mb-3">
+                    <a href="{{sectionurl}}">
+                        <div class="format_gridflow-lecture-icon me-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                <path d="M8 21h8m-4-4v4" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg>
+                        </div>
 
-                {{! Card header }}
-                <div class="gf-card-head">
-                    <!-- <span class="gf-num" aria-hidden="true">{{index}}</span> -->
-                    <h4 class="gf-card-title">
-                        <a href="{{sectionurl}}" class="gf-section-link">{{title}}</a>
-                    </h4>
-                    {{#hidden}}<span
-                        class="gf-badge-hidden">{{#str}}hidefromothers,format_gridflow{{/str}}</span>{{/hidden}}
-                    {{#isallcompleted}}<span class="gf-badge-done" aria-label="All complete">✓</span>{{/isallcompleted}}
+                        {{! Card header }}
+                        <div class="gf-card-head">
+                            <!-- <span class="gf-num" aria-hidden="true">{{index}}</span> -->
+                            <h4 class="gf-card-title">
+                                <a href="{{sectionurl}}" class="gf-section-link text-decoration-none">{{title}}</a>
+                            </h4>
+                            {{#hidden}}<span
+                                class="gf-badge-hidden">{{#str}}hidefromothers,format_gridflow{{/str}}</span>{{/hidden}}
+                            {{#isallcompleted}}<span class="gf-badge-done"
+                                aria-label="All complete">✓</span>{{/isallcompleted}}
+                        </div>
+                    </a>
                 </div>
 
                 {{! Card body }}
